@@ -1,14 +1,15 @@
 function Card(props) {
   function handleClick() {
-    props.onCardClick(props.data.link);
+    props.onCardClick( props.data );
   } 
 
   return (
-    <div className="photo-grid__card" key={ props.data._id }>
+    <div className="photo-grid__card">
       <button className="photo-grid__trash"></button>
       <img
         className="photo-grid__image"
         src={ props.data.link }
+        alt={ props.data.name }
         onClick={ handleClick }
       />
       <div className="photo-grid__card-caption">
