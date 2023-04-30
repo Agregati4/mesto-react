@@ -10,4 +10,4 @@ function PopupWithImage(props) {
   )
 }
 
-export default PopupWithImage
+export default ImagePopup
