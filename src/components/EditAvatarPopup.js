@@ -4,16 +4,18 @@ import * as React from 'react';
 function EditAvatarPopup(props) {
   const inputRef = React.useRef('');
 
+  React.useEffect(() => {
+    inputRef.current.value = '';
+  }, [props.isOpen]);
+
   function handleSubmit(e) {
     e.preventDefault();
 
     props.onUpdateAvatar(inputRef.current.value);
-
-    inputRef.current.value = '';
   };
 
   return (
-    <PopupWithForm onSubmit={ handleSubmit } isOpen={ props.isOpen } onClose={ props.onClose } title="Обновить аватар" name="profile-image" buttonText="Сохранить" children={
+    <PopupWithForm onSubmit={ handleSubmit } isOpen={ props.isOpen } onClose={ props.onClose } title="Обновить аватар" name="profile-image" buttonText={ props.isLoading ? "Сохранение..." : "Сохранить"} children={
       <>
         <input
           name="link"

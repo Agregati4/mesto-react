@@ -17,6 +17,8 @@ function App() {
   const [ selectedCard, setSelectedCard ] = React.useState({ link: null });
   const [ currentUser, setCurrentUser ] = React.useState({name: '', about: ''});
   const [ cards, setCards ] = React.useState([]);
+  const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || selectedCard.link;
+  const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
     api.getUserInfo()
@@ -35,6 +37,20 @@ function App() {
       alert(`Ошибка при запросе данных с сервера: ${err.name} - ${err.message}`);
     });
   }, [])
+
+  React.useEffect(() => {
+    function closeByEscape(evt) {
+      if(evt.key === 'Escape') {
+        closeAllPopups();
+      }
+    }
+    if(isOpen) { // навешиваем только при открытии
+      document.addEventListener('keydown', closeByEscape);
+      return () => {
+        document.removeEventListener('keydown', closeByEscape);
+      }
+    }
+  }, [isOpen])
 
   // Обработка клика по кнопке изменения профиля(Main)
   function handleEditProfileClick() {
@@ -91,13 +107,20 @@ function App() {
   };
 
   function handleUpdateUser({name, activity}) {
+    setIsLoading(true);
+
     api.saveNewUserInfo({name, activity})
-    .then(newUserInfo => setCurrentUser(newUserInfo))
+    .then(newUserInfo => {
+      setCurrentUser(newUserInfo);
+
+      closeAllPopups();
+    })
     .catch((err) => {
       alert(`Ошибка при запросе данных с сервера: ${err.name} - ${err.message}`);
-    });
-
-    closeAllPopups();
+    })
+    .finally(() => {
+      setIsLoading(false);
+    })
   };
 
   function handleCardDelete(card) {
@@ -109,37 +132,51 @@ function App() {
     })
     .catch((err) => {
       alert(`Ошибка при запросе данных с сервера: ${err.name} - ${err.message}`);
-    });
+    })
   };
 
   function handleUpdateAvatar(link) {
+    setIsLoading(true);
+
     api.updateProfileImage(link)
-    .then(newUserInfo => setCurrentUser(newUserInfo))
+    .then(newUserInfo => {
+      setCurrentUser(newUserInfo);
+
+      closeAllPopups();
+    })
     .catch((err) => {
       alert(`Ошибка при запросе данных с сервера: ${err.name} - ${err.message}`);
-    });
-
-    closeAllPopups();
+    })
+    .finally(() => {
+      setIsLoading(false);
+    })
   };
 
   function handleAddPlaceSubmit(data) {
+    setIsLoading(true);
+
     api.saveNewCardInfo(data)
-    .then(newCard => setCards([newCard, ...cards]))
+    .then(newCard => {
+      setCards([newCard, ...cards]);
+
+      closeAllPopups();
+    })
     .catch((err) => {
       alert(`Ошибка при запросе данных с сервера: ${err.name} - ${err.message}`);
-    });
-
-    closeAllPopups();
+    })
+    .finally(() => {
+      setIsLoading(false);
+    })
   }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <div className="page__content">
-          <EditProfilePopup isOpen={ isEditProfilePopupOpen } onClose={ closeAllPopups } onUpdateUser={ handleUpdateUser } />
-          <AddPlacePopup isOpen={ isAddPlacePopupOpen } onClose={ closeAllPopups } onAddPlace={ handleAddPlaceSubmit }/>
+          <EditProfilePopup isOpen={ isEditProfilePopupOpen } onClose={ closeAllPopups } onUpdateUser={ handleUpdateUser } isLoading={ isLoading } />
+          <AddPlacePopup isOpen={ isAddPlacePopupOpen } onClose={ closeAllPopups } onAddPlace={ handleAddPlaceSubmit } isLoading={ isLoading } />
           <PopupWithForm title="Вы уверены?" name="delete" buttonText="Да" />
-          <EditAvatarPopup isOpen={ isEditAvatarPopupOpen } onClose={ closeAllPopups } onUpdateAvatar={ handleUpdateAvatar } />
+          <EditAvatarPopup isOpen={ isEditAvatarPopupOpen } onClose={ closeAllPopups } onUpdateAvatar={ handleUpdateAvatar } isLoading={ isLoading } />
           <ImagePopup card={ selectedCard } onClose={ closeAllPopups } />
           <Header />
           <Main cards={ cards } onEditProfile={ handleEditProfileClick } onAddPlace={ handleAddPlaceClick } onEditAvatar={ handleEditAvatarClick } onCardClick={ handleCardClick } onCardLike={ handleCardLike } onCardDelete={ handleCardDelete } />

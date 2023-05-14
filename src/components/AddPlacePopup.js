@@ -20,7 +20,7 @@ function AddPlacePopup(props) {
   }
 
   return (
-    <PopupWithForm onSubmit={ handleSubmit } isOpen={ props.isOpen } onClose={ props.onClose } title="Новое место" name="card" buttonText="Создать" children={
+    <PopupWithForm onSubmit={ handleSubmit } isOpen={ props.isOpen } onClose={ props.onClose } title="Новое место" name="card" buttonText={ props.isLoading ? "Сохранение..." : "Создать"} children={
       <>
         <input
           name="title"

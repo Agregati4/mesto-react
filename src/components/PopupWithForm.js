@@ -1,4 +1,4 @@
-function PopupWithForm({ name, isOpen, onClose, title, children, buttonText, onSubmit }) {
+function PopupWithForm({ name, isOpen, onClose, title, children, buttonText, onSubmit, }) {
   return (
     <div id={`${name}-popup`} className={`popup ${isOpen && "popup_opened"}`}>
       <button id="popup__cross" type="button" className="popup__cross" onClick={ onClose } />

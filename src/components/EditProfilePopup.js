@@ -10,7 +10,7 @@ function EditProfilePopup(props) {
   React.useEffect(() => {
     setName(currentUser.name);
     setActivity(currentUser.about);
-  }, [currentUser]);
+  }, [currentUser, props.isOpen]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -27,7 +27,7 @@ function EditProfilePopup(props) {
   };
 
   return (
-    <PopupWithForm onSubmit={ handleSubmit } isOpen={ props.isOpen } onClose={ props.onClose } name="profile" title="Редактировать профиль" buttonText="Сохранить" children={
+    <PopupWithForm onSubmit={ handleSubmit } isOpen={ props.isOpen } onClose={ props.onClose } name="profile" title="Редактировать профиль" buttonText={ props.isLoading ? "Сохранение..." : "Сохранить"} children={
       <>
         <input
           name="name"
